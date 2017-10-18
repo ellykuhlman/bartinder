@@ -9,11 +9,13 @@ browser.get(url)
 
 html = browser.page_source
 
-print(html)
+html = html.replace('\xa0', '').\
+            replace('Go to recipe page...', '').\
+            replace('Go recipe page...', '').\
+            replace('\u200b', '').\
+            replace('Go to recipe page…', '')
 
 soup = bs4.BeautifulSoup(html)
-
-
 
 
 
@@ -24,4 +26,5 @@ recipes = {}
 for recipe in recipe_soup:
     name = recipe.find(itemprop='name').contents[0]
     ingredient_soup = recipe.find(itemprop="description").find_all("span")
-    recipes[name] = [i.contents[0] for i in ingredient_soup if i.contents]
+    recipes[name] = [i.contents[0] for i in ingredient_soup if i.contents and i.contents[0] != ' ']
+        
