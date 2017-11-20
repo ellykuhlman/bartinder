@@ -1,7 +1,9 @@
 import csv
 import pickle
 import re
+import tkinter.messagebox
 from difflib import SequenceMatcher
+from tkinter import * 
 
 class Cocktail():
 	"""Class to make Cocktails"""
@@ -111,16 +113,6 @@ def make_menu(all_cocktails, bar):
 
 	return menu
 
-def print_menu(menu):
-	# Print the menu nicely
-	if menu == []:
-		print('You can\'t make any cocktails :(')
-	else:
-		print('Menu | ', end=''),
-		for cocktail in menu:
-			print(cocktail, end=' | ')
-		print()
-
 
 cocktail_attributes = {
 	'ingredient': {
@@ -145,6 +137,8 @@ cocktail_attributes = {
 
 
 def tally_tastes(dictionary, pro, con):
+	print('what sounds good?')
+
 	for key in dictionary:
 		if input('{} '.format(key)) == 'y':
 			use_dict = pro
@@ -165,14 +159,13 @@ def print_my_cocktails(my_cocktails):
 		print('{0:23} {1:5d} {2:5d}'.format(str(key), my_cocktails[key][0], my_cocktails[key][1]))
 	print('\n\n')
 
+
 def pick_cocktail(menu):
 	# CLEAN THIS, and make the matching stuff case-sensitive
 
 	pro_tastes = {'ingredient': {}, 'preparation': {}}
 	con_tastes = {'ingredient': {}, 'preparation': {}}
 	my_cocktails = {}
-
-	print('what sounds good?')
 
 	for item in ['ingredient', 'preparation']:
 		pro_tastes[item], con_tastes[item] = tally_tastes(
