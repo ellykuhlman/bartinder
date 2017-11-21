@@ -2,8 +2,16 @@ import csv
 import pickle
 import re
 import tkinter.messagebox
+import tkinter.simpledialog
 from difflib import SequenceMatcher
 from tkinter import * 
+from tkinter_test import Checklist, SwipeScreen
+
+window = Tk()
+window.minsize(width=750, height=500)
+middle = Frame(height=475, width=300)
+
+window.update()
 
 class Cocktail():
 	"""Class to make Cocktails"""
@@ -66,15 +74,24 @@ def make_master_bar(bar_file):
 
 	return master_bar
 
+
 def make_bar(master_bar):
 	# Make a Bar
-	bar_items = []
 
+	var = IntVar()
 	# Find out which items are in the user's bar
-	for item in master_bar.ingredients:
-		if input('do you have {}? (y/n) '.format(item)) == 'y':
-			bar_items.append(item)
+	bar_checklist = Checklist(window, master_bar.ingredients)
+	done_button = Button(window, text='Done', command=lambda: var.set(1))
+	done_button.place(relx=.98, rely=.98, anchor='se')
+	
+	# Wait until the user is done inputting ingredients
+	done_button.wait_variable(var)
+	
+	bar_checklist.clear_list()
+	done_button.destroy()
+
 	# Make a bar object with the above items	
+	bar_items = bar_checklist.check_vars()
 	bar = Bar(bar_items)
 
 	return bar
@@ -82,8 +99,15 @@ def make_bar(master_bar):
 
 def save_bar(bar):
 	# Option to save an existing bar to file
-	if input('Do you want to save this bar? ') == 'y':
-		file_name = input('Whose bar is this?' ) + '_bar.p'
+
+	window.update()
+	save_message = tkinter.messagebox.askyesno(message='Do you want to save this bar?', 
+	title='Save Bar?')
+
+	if save_message:
+		window.update()
+		name = simpledialog.askstring('Input', 'Whose bar is this?', parent=window)
+		file_name = str(name) + '_bar.p'
 		pickle.dump(bar, open(file_name, 'wb'))
 
 
@@ -137,27 +161,40 @@ cocktail_attributes = {
 
 
 def tally_tastes(dictionary, pro, con):
-	print('what sounds good?')
-
+	title = Label(window, text='What Sounds Good?\nSwipe Left or Right')
+	title.place(relx=.5, rely=.1, anchor='n')
 	for key in dictionary:
-		if input('{} '.format(key)) == 'y':
+		swipe = SwipeScreen(window, middle, key)
+		if swipe.make_swipe():
+		#if input('{} '.format(key)) == 'y':
 			use_dict = pro
 		else:
 			use_dict = con
+
 		for item in dictionary[key]:
 			if item.lower() not in use_dict:
 				use_dict[item.lower()] = 1
 			else:
 				use_dict[item.lower()] += 1
+
+	title.destroy()
+
 	return pro, con
 
 
 def print_my_cocktails(my_cocktails):
-	print('\n\n')
-	print('{0:25} {1:5} {2:5}'.format('Cocktail', 'Love', 'Hate'))
+	row = 3
+	window.update()
+
+	cocktail = Label(middle, text='Cocktail').grid(row=row, column=1)
+	love = Label(middle, text='Love').grid(row=row, column=2)
+	hate = Label(middle, text='Hate').grid(row=row, column=3)
+
 	for key in my_cocktails:
-		print('{0:23} {1:5d} {2:5d}'.format(str(key), my_cocktails[key][0], my_cocktails[key][1]))
-	print('\n\n')
+		row += 1
+		label1 = Label(middle, text=str(key)).grid(row=row, column=1)
+		label2 = Label(middle, text=my_cocktails[key][0]).grid(row=row, column=2)
+		label3 = Label(middle, text=my_cocktails[key][1]).grid(row=row, column=3)
 
 
 def pick_cocktail(menu):
@@ -201,7 +238,6 @@ def pick_cocktail(menu):
 	
 	print_my_cocktails(my_cocktails)
 
-	
 
 
 # Interface for when there is an actual user
@@ -209,14 +245,24 @@ def pick_cocktail(menu):
 all_cocktails = make_cocktails('master_cocktails_2.csv')
 master_bar = make_master_bar('master_bar.csv')
 
-if input('Do you have a saved bar? ') == 'n':
+
+window.update()
+bar_message = tkinter.messagebox.askyesno(message='Do you have a saved bar?', 
+	title='Welcome to Bartinder')
+
+if not bar_message:
 	bar = make_bar(master_bar)
 	save_bar(bar)
 else:
-	bar_name = input('What is your name? ') + '_bar.p'
+	name = simpledialog.askstring('Input', 'What is your name?', parent=window)
+	bar_name = str(name) + '_bar.p'
 	bar = pickle.load(open(bar_name, 'rb'))
 
-	if input('do you want to update your bar? ') == 'y':
+'''	window.update()
+	update_message = tkinter.messagebox.askyesno(message='Do you want to update your bar?', 
+	title='Update Bar')
+
+	if update_message:
 		print('Add items')
 		answer = input('item to add:')
 		while answer != 'done':
@@ -227,10 +273,14 @@ else:
 		while answer != 'done':
 			bar.remove_item(answer)
 			answer = input('item to remove:')
-		save_bar(bar)
+		save_bar(bar)'''
+
 
 
 my_menu = make_menu(all_cocktails, bar)
+
+middle.place(relx=0.5, rely=0.5, anchor='center')
+window.update()
 
 pick_cocktail(my_menu)
 
@@ -245,11 +295,7 @@ pick_cocktail(my_menu)
 
 
 
-
-
-
-
-
+window.wait_window()
 
 
 
