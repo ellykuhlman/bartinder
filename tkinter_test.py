@@ -3,9 +3,6 @@ import tkinter.messagebox
 
 import time
 
-window = Tk()
-
-
 class Checklist():
 	def __init__(self, parent=None, list_options=[]):
 		self.parent = parent
@@ -18,12 +15,12 @@ class Checklist():
 
 		for option in self.list_options:
 			var = IntVar()
-			check_item = Checkbutton(window, text=option, variable=var)
+			check_item = Checkbutton(self.parent, text=option, variable=var)
 			check_item.grid(row=row, column=col)
 			self.check_items.append(check_item)
 			self.vars.append(var)
 
-			if row < len(self.list_options)/2:
+			if row < len(self.list_options)/4:
 				row += 1
 			else:
 				row = 1
@@ -56,13 +53,13 @@ def show_message():
 # 1. captures the motion of the mouse and appends it to moves
 # 2. check if the mouse has left the swipe area
 # 3. once the mouse has left, checks if it went left or right
-moves = []
+'''moves = []
 likes = []
 dislikes = []
 
 my_list = ['hello', 'hi', 'purple', 'grapefruit', 'peanut']
 
-checklist_over = False
+checklist_over = False'''
 
 class SwipeScreen():
 
@@ -74,32 +71,31 @@ class SwipeScreen():
 		self.dislikes = []
 		self.x_value = 0
 
-		print('made a swipe screen')
+		#print('made a swipe screen')
 
 	def read_swipe(self, event):
 		self.x_value = event.x
 
 	def make_swipe(self):
 		title = Label(text=self.item)
-		title.grid(column=2)
+		title.place(relx=.5, rely=.25, anchor='n')
 
-		print(self.item)
+		#print(self.item)
 
 		self.widget.bind('<Leave>', self.read_swipe)
 
 		while self.x_value == 0:
 			self.parent.update()
 
-		print(self.x_value)
-
-		if self.x_value > 200:
-			self.likes.append(self.item)
-		elif self.x_value < 200:
-			self.dislikes.append(self.item)
+		#print(self.x_value)
 
 		title.destroy()
 
-		return self.likes, self.dislikes
+		if self.x_value > 200:
+			return True
+		elif self.x_value < 200:
+			return False
+
 
 
 def clear_checklist_popup():
@@ -143,12 +139,12 @@ def launch_swipe():
 	middle, left, right = draw_swipe_screen()
 	swipe_items(my_list, window, middle)
 
-my_checklist = Checklist(window, my_list)
+'''my_checklist = Checklist(window, my_list)
 test_button = Button(text='I am a button', command=clear_checklist_popup)
-test_button.grid(row=8, columnspan=2)
+test_button.grid(row=8, columnspan=2)'''
 
-
+'''
 
 window.update()
 window.mainloop()
-
+'''
