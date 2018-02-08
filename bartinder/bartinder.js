@@ -15,6 +15,14 @@ function Bar(name, ingredients) {
 	this.ingredients = ingredients;
 }
 
+//Taste attribute Class
+function TasteAttr(name, type, direct, similar) {
+	this.name = name;
+	this.type = type;
+	this.direct = direct;
+	this.similar = similar;
+}
+
 // Function to check all checkboxes
 // Probably should make this more general in future
 function checkAll() {
@@ -95,12 +103,89 @@ function clearBar() {
 	}
 }
 
+function clearTastes() {
+	var tasteSpot = document.getElementById('tastes');
+	while(tasteSpot.firstChild){
+		tasteSpot.removeChild(tasteSpot.firstChild)
+	}
+}
+
+function tasteWriter(i) {
+	if (i >= cocktailAttributes.length) {
+		pass
+	} else {
+
+
+		var tasteSpot = document.getElementById('tastes')
+
+		console.log(cocktailAttributes.length)
+
+		var newSpace = document.createElement('div');
+		var cocktailName = document.createElement('h3');
+		var nameText = document.createTextNode(cocktailAttributes[i].name);
+		cocktailName.appendChild(nameText);
+		var slider = document.createElement('input');
+		slider.setAttribute('type', 'range');
+		var tasteButton = document.createElement('input');
+		tasteButton.type = 'button';
+		tasteButton.value = 'Log Taste';
+		tasteButton.addEventListener('click', function () {
+			console.log(slider.value);
+			i++;
+			console.log(i);
+			clearTastes();
+			tasteWriter(i);
+		});
+
+		newSpace.appendChild(cocktailName);
+		newSpace.appendChild(slider);
+		newSpace.appendChild(tasteButton);
+		tasteSpot.appendChild(newSpace);
+	}
+}
 
 function inputTastes() {
+	var i = 0;
+
+	tasteWriter(i)
+
+	/*
+	//TRYING TO USE THE tasteWriter FUNCTION INSTEAD OF ALL THIS
 	var tasteSpot = document.getElementById('tastes')
 
+	var i = 0;
+
+	console.log(cocktailAttributes.length)
+
+	//while (i < cocktailAttributes.length) {
+		var newSpace = document.createElement('div');
+		var cocktailName = document.createElement('h3');
+		var nameText = document.createTextNode(cocktailAttributes[i].name);
+		cocktailName.appendChild(nameText);
+		var slider = document.createElement('input');
+		slider.setAttribute('type', 'range');
+		var tasteButton = document.createElement('input');
+		tasteButton.type = 'button';
+		tasteButton.value = 'Log Taste';
+		tasteButton.addEventListener('click', function () {
+			console.log(slider.value);
+			i++;
+			console.log(i);
+			clearTastes();
+		});
+
+		newSpace.appendChild(cocktailName);
+		newSpace.appendChild(slider);
+		newSpace.appendChild(tasteButton);
+		tasteSpot.appendChild(newSpace);
+	//}
+
+	/*
+	//THIS IS OUTDATED, IT IS CODE FROM WHEN COCKTAIL ATTRIBUTES WAS AN OBJECT
+	//NOW (2-8-18) IT IS A LIST
 	// Right now, this lists every cocktail attribute, but the log button only
 	// logs for the last one - need to figure out how to display one at a time
+
 	for (key1 in cocktailAttributes) {
 		for (key2 in cocktailAttributes[key1]) {
 			console.log(key2);
@@ -123,13 +208,19 @@ function inputTastes() {
 			tasteSpot.appendChild(newSpace);
 		}
 	}
+	*/
 }
 
 function logTaste(slider) {
 	console.log(slider.value);
 }
 
+function advanceCounter(i) {
+	i++
+}
+
 /*
+// Prints all the cocktails on the screen - probably not needed anymore
 function printCocktails() {
 	var myList = document.getElementById('cocktailList');
 
@@ -150,40 +241,22 @@ var barList = ["aged rum", "Amber ale", "Angostura bitters", "apple brandy", "ap
 var listLength = allCocktails.length;
 
 
-var brandy = {
-	name: 'Brandy',
-	type: 'ingredient',
-	direct: ['Cognac', 'brandy'],
-	similar: ['bourbon', 'rye', 'whiskey'] 
-};
+var brandy = new TasteAttr('Brandy', 'i', ['Cognac', 'brandy'], ['bourbon', 'rye', 'whiskey']);
+var gin = new TasteAttr('Gin', 'i', ['gin'], ['vodka']);
+var rum = new TasteAttr('Rum', 'i', ['rum'], []);
+var tequila = new TasteAttr('Tequila', 'i', ['tequila'], ['mezcal']);
+var vodka = new TasteAttr('Vodka', 'i', ['vodka'], ['gin']);
+var whiskey = new TasteAttr('Whiskey', 'i', ['bourbon', 'rye', 'whiskey'], ['Cognac', 'brandy']);
+var autumnal = new TasteAttr('Autumnal', 'i', ['cranberry', 'cinnamon'], []);
+var bitter = new TasteAttr('Bitter', 'i', ['Campari', 'bitters'], []);
+var bubbly = new TasteAttr('Bubbly', 'i', ['sparkling', 'champagne', 'soda'], []);
+var herbal = new TasteAttr('Herbal', 'i', ['dry vermouth', 'chartreuse'], ['bitters']);
+var citrus = new TasteAttr('Citrus', 'i', ['lime', 'lemon', 'grapefruit'], ['pineapple', 'coco']);
+var tropical = new TasteAttr('Tropical', 'i', ['pineapple', 'coco'], ['lime', 'lemon', 'grapefruit']);
+var refreshing = new TasteAttr('Refreshing', 'p', ['shake'], ['blend']);
+var boozy = new TasteAttr('Boozy', 'p', ['stir'], []);
 
-
-
-var cocktailAttributes = [
-	
-
-
-	{
-	'ingredient': {
-		'brandy': ['Cognac', 'brandy'],
-		'gin': ['gin'],
-		'rum': ['rum'],
-		'tequila': ['tequila'],
-		'vodka': ['vodka'],
-		'whiskey': ['bourbon', 'rye', 'whiskey'],
-		'autumnal': ['cranberry', 'cinnamon'],
-		'bitter': ['Campari', 'bitters'],
-		'bubbly': ['sparkling', 'champagne', 'soda'],
-		'citrus': ['lime', 'lemon', 'grapefruit'],
-		'herbal': ['dry vermouth', 'bitters', 'chartreuse'],
-		'tropical': ['pineapple', 'coco']
-	},
-	'preparation':{
-		'refreshing': ['shake'],
-		'boozy': ['stir']
-	}
-	}
-];
+var cocktailAttributes = [brandy, gin, rum, tequila, vodka, whiskey, autumnal, bitter, bubbly, herbal, citrus, tropical, refreshing, boozy];
 
 // Makes all the cocktails
 for (var i = 0; i < listLength; i++) {
