@@ -63,7 +63,6 @@ function Bar(name, ingredients) {
 // FUNCTIONS -----------------------------------
 
 function barInput() { // currently in Main
-	//var barSpot = document.getElementById('barForm');
 	for (item in barList) {
 		var newCheckItem = document.createElement('INPUT');
 		newCheckItem.setAttribute('type', 'checkbox');
@@ -72,9 +71,9 @@ function barInput() { // currently in Main
 		newCheckItem.setAttribute('value', barList[item]);
 		var newLabel = document.createElement('label');
 		newLabel.setAttribute('for', barList[item]);
-		barSpot.appendChild(newCheckItem);
+		barCheckBoxSpot.appendChild(newCheckItem);
 		newLabel.appendChild(document.createTextNode(barList[item]));
-		barSpot.appendChild(newLabel);
+		barCheckBoxSpot.appendChild(newLabel);
 	}
 }
 
@@ -94,7 +93,6 @@ function isChecked(list) {
 			checkedItems.push(list[item]);
 		}
 	}
-
 	return checkedItems;
 }
 
@@ -109,6 +107,18 @@ function makeBar() {
 	myBar = new Bar('myBar', checkedItems);
 	clear(barSpot);
 	return myBar;
+}
+
+function makeTasteSpot() {
+	let tasteStartButton = document.createElement('input');
+	tasteStartButton.type = 'button';
+	tasteStartButton.value = 'Start Swiping';
+	tasteStartButton.addEventListener('click', function (event) {
+		clear(tasteSpot),
+		inputTastes(), 
+		event.stopPropagation();
+	});
+	tasteSpot.appendChild(tasteStartButton);
 }
 
 // Makes the menu based on items in the bar
@@ -143,15 +153,26 @@ function clear(element) {
 	}
 }
 
+function makeMatchSpot() {
+	var matchButton = document.createElement('input');
+	matchButton.type = 'button';
+	matchButton.value = 'See your matches!';
+	//matchButton.addEventListener('click', console.log('hello'));
+	matchButton.addEventListener('click', function (event) {
+		clear(menuSpot),
+		printMatches(), 
+		event.stopPropagation();
+
+	});
+	menuSpot.appendChild(matchButton);
+}
+
 
 function tasteWriter(i, likes, dislikes) {
 	if (i >= cocktailAttributes.length) {
 		makeMatches(likes, dislikes);
+		makeMatchSpot();
 	} else {
-		//var tasteSpot = document.getElementById('tastes')
-
-		//console.log(cocktailAttributes.length)
-
 		var newSpace = document.createElement('div');
 		var cocktailName = document.createElement('h3');
 		var nameText = document.createTextNode(cocktailAttributes[i].name);
@@ -160,8 +181,8 @@ function tasteWriter(i, likes, dislikes) {
 		slider.setAttribute('type', 'range');
 		var tasteButton = document.createElement('input');
 		tasteButton.type = 'button';
-		tasteButton.value = 'Log Taste';
-		tasteButton.addEventListener('click', function () {
+		tasteButton.value = 'Next3';
+		tasteButton.addEventListener('click', function (event) {
 			if(slider.value >= 50) {
 				likes = likes.concat(cocktailAttributes[i].direct);
 			} else {
@@ -169,6 +190,7 @@ function tasteWriter(i, likes, dislikes) {
 			};
 			i++;
 			clear(tasteSpot);
+			event.stopPropagation();
 			tasteWriter(i, likes, dislikes);
 		});
 
@@ -184,8 +206,6 @@ function inputTastes() {
 	var likes = [];
 	var dislikes = [];
 	tasteWriter(i, likes, dislikes);
-
-
 }
 
 function makeMatches(likes, dislikes) {
@@ -218,13 +238,12 @@ function makeMatches(likes, dislikes) {
 
 		myMenu[item].matchPro = Math.round((pro/appears) * 100);
 		myMenu[item].matchCon = Math.round((con/appears) * 100);
-		console.log(myMenu[item].name, myMenu[item].matchPro, myMenu[item].matchCon);
+		//console.log(myMenu[item].name, myMenu[item].matchPro, myMenu[item].matchCon);
 	}	
 }
 
 
 function printMatches() {
-	// var menuSpot = document.getElementById('cocktailNames');
 	var tableSpot = document.createElement('table');
 	var tableBody = document.createElement('tbody');
 	var headerRow = document.createElement('tr');
