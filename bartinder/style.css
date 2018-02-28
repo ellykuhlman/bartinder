@@ -1,0 +1,153 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 60em;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  min-height: 100%;
+  position: relative;
+}
+
+body input[type=button] {
+  border-radius: 0;
+  border: 1px solid black;
+  margin-top: 10px;
+  margin-right: 5px;
+  height: 20px;
+}
+
+body input[type=button]:focus {
+  outline: 0;
+}
+
+.header {
+  background-image: url('bar_background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0% 70%;
+  height: 300px;
+  text-align: center;
+  text-shadow: 0 0 3px grey;
+  font-size: 30px;
+  color: white;
+  line-height: 300px;
+}
+
+.bar-checkbox {
+  -webkit-appearance: none;
+  /*background-color: #4286f4;*/
+  /*opacity: 0.2;*/
+  content: '';
+  color: black;
+  border: 1px solid black;
+  padding: 8px;
+  margin-bottom: 0px;
+}
+
+.bar-checkbox:focus {
+  outline: 0;
+}
+
+.bar-checkbox:checked + .bar-checkmark {
+  display: inline-block;
+}
+
+.bar-checkbox:unchecked + .bar-checkmark {
+  display: none;
+}
+
+.bar-checkbox-label {
+  font-size: 15px;
+}
+
+.bar-checkmark {
+  display: none;
+  position: absolute;
+  top: 6px;
+  left: 9px;
+  content: '';
+  width: 3.5px;
+  height: 7px;
+  border: solid #28af9a;
+  border-width: 0 2px 2px 0;
+  z-index: -1;
+  transform: rotate(45deg);
+}
+
+.bar-checkbox + label {
+  display: inline-block;
+
+}
+
+.bar-checkbox-div {
+  position: relative;
+  display: inline-block;
+  min-width: 23%;
+  max-width: 23%;
+  height: 20px;
+  margin: 1px;
+}
+
+.barSpotDiv {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.buttonSpot {
+  position: relative;
+  height: 20px;
+}
+
+.nextButton {
+  position: absolute;
+  right: 50px;
+}
+
+.tasteName {
+  text-align: center;
+  line-height: 200px;
+}
+
+
+.centerButton {
+  margin-left: auto;
+  margin-right: auto;
+  width: 200px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  margin-top: 50px;
+}
+
+.centerButton input[type=button] {
+  height: 50px;
+  font-size: 20px;
+  border-width: 1px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 100
+}
+
+.bottom {
+  position: relative;
+  bottom: 0;
+  border-top: solid 2px #ceede8;
+  margin-bottom: 5px;
+  width: 100%;
+
+}
+
+table, th, td {
+  width: 60%;
+  margin: auto;
+}
+
+tr {
+  border-bottom: solid 1px black;
+}
+
+tr:nth-child(even) {
+  background-color: #dbdddd;
+}
