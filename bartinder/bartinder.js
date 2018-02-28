@@ -5,6 +5,7 @@ const barList = ["aged rum", "Amber ale", "Angostura bitters", "apple brandy", "
 
 const listLength = allCocktails.length;
 
+const myMatchPercents = [];
 
 const brandy = new TasteAttr('Brandy', 'i', ['Cognac', 'brandy'], ['bourbon', 'rye', 'whiskey']);
 const gin = new TasteAttr('Gin', 'i', ['gin'], ['vodka']);
@@ -22,283 +23,458 @@ const refreshing = new TasteAttr('Refreshing', 'p', ['shake'], ['blend']);
 const boozy = new TasteAttr('Boozy', 'p', ['stir'], []);
 
 const cocktailAttributes = [brandy, gin, rum, tequila, vodka, whiskey, autumnal, bitter, bubbly, herbal, citrus, tropical, refreshing, boozy];
-
+const myAttributes = [];
+var myBar;
+var myMenu;
 
 // GLOBAL DOM CONSTANTS -----------------------
 const barSpot = document.getElementById('barForm');
 const barCheckBoxSpot = document.getElementById('barBoxes');
 const tasteSpot = document.getElementById('tastes');
-const menuSpot = document.getElementById('cocktailNames');
+const matchSpot = document.getElementById('matches');
 
 // CLASSES -------------------------------
 // Taste attribute Class
 function TasteAttr(name, type, direct, similar) {
-	this.name = name;
-	this.type = type;
-	this.direct = direct;
-	this.similar = similar;
+    this.name = name;
+    this.type = type;
+    this.direct = direct;
+    this.similar = similar;
 }
 
 // Cocktail Class
 function Cocktail(name, ingredients, recipe) {
-	this.name = name;
-	this.ingredients = ingredients;
-	this.recipe = recipe;
-	this.matchPro = 0;
-	this.matchCon = 0;
+    this.name = name;
+    this.ingredients = ingredients;
+    this.recipe = recipe;
+    this.matchPro = 0;
+    this.matchCon = 0;
 
-	this.printName = function() {
-		return this.name;
-	}
+    this.printName = function() {
+        return this.name;
+    }
 }
 
 // Bar Class
 function Bar(name, ingredients) {
-	this.name = name;
-	this.ingredients = ingredients;
+    this.name = name;
+    this.ingredients = ingredients;
 }
-
 
 
 // FUNCTIONS -----------------------------------
 
-function barInput() { // currently in Main
-	for (item in barList) {
-		var newCheckItem = document.createElement('INPUT');
-		newCheckItem.setAttribute('type', 'checkbox');
-		newCheckItem.setAttribute('id', barList[item]);
-		newCheckItem.setAttribute('name', 'bar');
-		newCheckItem.setAttribute('value', barList[item]);
-		var newLabel = document.createElement('label');
-		newLabel.setAttribute('for', barList[item]);
-		barCheckBoxSpot.appendChild(newCheckItem);
-		newLabel.appendChild(document.createTextNode(barList[item]));
-		barCheckBoxSpot.appendChild(newLabel);
-	}
+
+// HELPER FUNCTIONS --------------------------------
+
+function setAttributes(element, object) { // Sets multiple attributes for an element
+    for (key in object) {
+        element.setAttribute(key, object[key]);
+    }
 }
 
-// Function to check all checkboxes
-function checkAll(list) {
-	for (item in list) {
-		document.getElementById(list[item]).checked = true;
-	}
+function makeButton(value, functions){ // Makes a button element
+    let button = document.createElement('input');
+    button.type = 'button';
+    button.value = value;
+    button.addEventListener('click', functions);
+    return button;
 }
 
-
-// Checks if an item is checked off, then adds to the bar list
-function isChecked(list) {
-	var checkedItems = [];
-	for (item in list) {
-		if (document.getElementById(list[item]).checked) {
-			checkedItems.push(list[item]);
-		}
-	}
-	return checkedItems;
+function clear(element) { // Clears all HTML elements
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
 }
 
+function checkAll(list) {  // Function to check all checkboxes
+    for (item in list) {
+        document.getElementById(list[item]).checked = true;
+    }
+}
+
+function isChecked(list) { // Checks if an item is checked off, then adds to the bar list
+    const checkedItems = [];
+    for (item in list) {
+        if (document.getElementById(list[item]).checked) {
+            checkedItems.push(list[item]);
+        }
+    }
+    return checkedItems;
+}
+
+// BAR FUNCITONS ---------------------------------------------
+function barInput() {
+    for (item in barList) {
+        let newDiv = document.createElement('div');
+        newDiv.setAttribute('class', 'bar-checkbox-div');
+        
+        let newCheckItem = document.createElement('INPUT');
+        setAttributes(newCheckItem, {'type': 'checkbox', 
+            'class': 'bar-checkbox',
+            'id': barList[item],
+            'name': 'bar',
+            'value': barList[item]})
+
+        let newLabel = document.createElement('label');
+        setAttributes(newLabel, {'for': barList[item], 'class': 'bar-checkbox-label'})
+        newLabel.appendChild(document.createTextNode(barList[item]));
+        
+        let newSpan = document.createElement('span');
+        newSpan.setAttribute('class', 'bar-checkmark');
+        
+        for (i in a = [newCheckItem, newSpan, newLabel]) {
+            newDiv.appendChild(a[i]);
+        }
+
+        barCheckBoxSpot.appendChild(newDiv);
+    }
+}
 
 function checkAllBar() {
-	checkAll(barList);
+    checkAll(barList);
 }
 
 
 function makeBar() {
-	var checkedItems = isChecked(barList);
-	myBar = new Bar('myBar', checkedItems);
-	clear(barSpot);
-	return myBar;
+    const checkedItems = isChecked(barList);
+    myBar = new Bar('myBar', checkedItems);
+    clear(barSpot);
+    return myBar;
 }
+
+// TASTE INPUT FUNCTIONS  ---------------------------------------
+
 
 function makeTasteSpot() {
-	let tasteStartButton = document.createElement('input');
-	tasteStartButton.type = 'button';
-	tasteStartButton.value = 'Start Swiping';
-	tasteStartButton.addEventListener('click', function (event) {
-		clear(tasteSpot),
-		inputTastes(), 
-		event.stopPropagation();
-	});
-	tasteSpot.appendChild(tasteStartButton);
+    tasteSpot.setAttribute('style', 'height:300px')
+    
+    let tasteHeader = document.createElement('h3');
+    tasteHeader.appendChild(document.createTextNode('Step 2: Make your matches'));
+    tasteSpot.appendChild(tasteHeader);
+    
+    let buttonDiv = document.createElement('div')
+    buttonDiv.setAttribute('class','centerButton');
+    
+    let tasteStartButton = makeButton('Start Swiping', function (event) {
+        clear(tasteSpot),
+        inputTastes(), 
+        event.stopPropagation();
+    });
+    
+    buttonDiv.appendChild(tasteStartButton);
+    tasteSpot.appendChild(buttonDiv)
 }
 
-// Makes the menu based on items in the bar
-function makeMenu() {
-	var newMenu = []
-	for(item in cocktailObjectList) {
-		var have = true;
-		for(ingredient in cocktailObjectList[item].ingredients) {
-			// Checks if the ingredient has a * indicating optional
-			if (/[*]+/.test(cocktailObjectList[item].ingredients[ingredient])) {
-				continue;
-			// Checks if the ingredient is in the bar
-			} else if (myBar.ingredients.includes(cocktailObjectList[item].ingredients[ingredient])){
-				continue;
-			// Checks that the ingredient is not a blank string
-			} else if (/\S/.test(cocktailObjectList[item].ingredients[ingredient])){
-				have = false;
-			}
-		}
 
-		if (have) {
-			newMenu.push(cocktailObjectList[item]);
-		}
-	}
-
-	return newMenu;
+function inputTastes() {
+    updateAttributes();
+    const i = 0;
+    const likes = [];
+    const dislikes = [];
+    tasteWriter(i, likes, dislikes);
 }
 
-function clear(element) {
-	while (element.firstChild) {
-		element.removeChild(element.firstChild);
-	}
-}
 
-function makeMatchSpot() {
-	var matchButton = document.createElement('input');
-	matchButton.type = 'button';
-	matchButton.value = 'See your matches!';
-	//matchButton.addEventListener('click', console.log('hello'));
-	matchButton.addEventListener('click', function (event) {
-		clear(menuSpot),
-		printMatches(), 
-		event.stopPropagation();
+function updateAttributes() {
+    console.log(myBar.ingredients)
+    for (item in cocktailAttributes) {
+        if (cocktailAttributes[item].type === 'i') {
+            let yes = false
+            for (ingredient in cocktailAttributes[item].direct) {
+                console.log(cocktailAttributes[item].direct[ingredient]);
+                let re = new RegExp(cocktailAttributes[item].direct[ingredient], 'i');
 
-	});
-	menuSpot.appendChild(matchButton);
+                if (myBar.ingredients.filter(function(sundae) {
+                    return eval(re).test(sundae)}).length > 0) {    
+                    yes = true;
+                    break;
+                }
+            }
+            if (yes) {
+                myAttributes.push(cocktailAttributes[item]);
+            }
+        } else {
+            myAttributes.push(cocktailAttributes[item]);
+        }
+    }
+    return myAttributes;
 }
 
 
 function tasteWriter(i, likes, dislikes) {
-	if (i >= cocktailAttributes.length) {
-		makeMatches(likes, dislikes);
-		makeMatchSpot();
-	} else {
-		var newSpace = document.createElement('div');
-		var cocktailName = document.createElement('h3');
-		var nameText = document.createTextNode(cocktailAttributes[i].name);
-		cocktailName.appendChild(nameText);
-		var slider = document.createElement('input');
-		slider.setAttribute('type', 'range');
-		var tasteButton = document.createElement('input');
-		tasteButton.type = 'button';
-		tasteButton.value = 'Next3';
-		tasteButton.addEventListener('click', function (event) {
-			if(slider.value >= 50) {
-				likes = likes.concat(cocktailAttributes[i].direct);
-			} else {
-				dislikes = dislikes.concat(cocktailAttributes[i].direct);
-			};
-			i++;
-			clear(tasteSpot);
-			event.stopPropagation();
-			tasteWriter(i, likes, dislikes);
-		});
+    if (i >= myAttributes.length) {
+        makeMatches(likes, dislikes);
+    } else {
+        let newSpace = document.createElement('div');
+        newSpace.setAttribute('style', 'height:300px');
+        let mc = new Hammer(newSpace);
+        // console.log(mc);
+        let cocktailName = document.createElement('h3');
+        cocktailName.setAttribute('class', 'tasteName')
+        let nameText = document.createTextNode(myAttributes[i].name);
+        cocktailName.appendChild(nameText);
+        mc.on('swipeleft swiperight', function(event) {
+            if (event.type === 'swipeleft') {
+                dislikes = dislikes.concat(myAttributes[i].direct);
+            } else if (event.type === 'swiperight') {
+                likes = likes.concat(myAttributes[i].direct);
+            }
+            i++;
+            clear(tasteSpot);
+            tasteWriter(i, likes, dislikes);
+        });
 
-		newSpace.appendChild(cocktailName);
-		newSpace.appendChild(slider);
-		newSpace.appendChild(tasteButton);
-		tasteSpot.appendChild(newSpace);
-	}
+        newSpace.appendChild(cocktailName);
+        tasteSpot.appendChild(newSpace);
+    }
 }
 
-function inputTastes() {
-	var i = 0;
-	var likes = [];
-	var dislikes = [];
-	tasteWriter(i, likes, dislikes);
-}
+
+
+
+// MATCHING & PRINTING FUNCTIONS ------------------------------------
 
 function makeMatches(likes, dislikes) {
-	myMenu = makeMenu();
+    cocktailMatches(likes, dislikes);
+    makeMatchSpot();
+}
 
-	for (item in myMenu) {
-		var pro = 0,
-			con = 0,
-			appears = 0;
+function cocktailMatches(likes, dislikes) {
+    myMenu = makeMenu();
 
-		for (ingredient in likes) {
-			// sets RegExp with the ingredient
-			var re = '/' + likes[ingredient] + '/';
-			// Creates an array of items that contain the ingredient
-			// Checks if that array contains anything
-			if (myMenu[item].ingredients.filter(function(iceCream) {
-					return eval(re).test(iceCream)}).length > 0) {
-				pro++;
-				appears++;
-			} 
-		}
-		for (ingredient in dislikes) {
-			var re = '/' + dislikes[ingredient] + '/';
-			if (myMenu[item].ingredients.filter(function(sundae) {
-					return eval(re).test(sundae)}).length > 0) {	
-				con++;
-				appears++;
-			}
-		}
+    for (item in myMenu) {
+        let pro = 0,
+            con = 0,
+            appears = 0;
 
-		myMenu[item].matchPro = Math.round((pro/appears) * 100);
-		myMenu[item].matchCon = Math.round((con/appears) * 100);
-		//console.log(myMenu[item].name, myMenu[item].matchPro, myMenu[item].matchCon);
-	}	
+        for (ingredient in likes) {
+            // sets RegExp with the ingredient
+            let re = '/' + likes[ingredient] + '/';
+            // Creates an array of items that contain the ingredient
+            // Checks if that array contains anything
+            if (myMenu[item].ingredients.filter(function(iceCream) {
+                    return eval(re).test(iceCream)}).length > 0) {
+                pro++;
+                appears++;
+            } 
+        }
+        for (ingredient in dislikes) {
+            let re = '/' + dislikes[ingredient] + '/';
+            if (myMenu[item].ingredients.filter(function(sundae) {
+                    return eval(re).test(sundae)}).length > 0) {    
+                con++;
+                appears++;
+            }
+        }
+
+        myMenu[item].matchPro = Math.round((pro/appears) * 100);
+        myMenu[item].matchCon = Math.round((con/appears) * 100);
+
+        if (!(myMatchPercents.includes(myMenu[item].matchPro)) && !isNaN(myMenu[item].matchPro)) {
+            myMatchPercents.push(myMenu[item].matchPro);
+        }
+
+        console.log(myMatchPercents);
+    }   
 }
 
 
-function printMatches() {
-	var tableSpot = document.createElement('table');
-	var tableBody = document.createElement('tbody');
-	var headerRow = document.createElement('tr');
-	var a = ['Cocktail', 'Love', 'Hate']
-	for (var i in a) {
-		var cell = document.createElement('th');
-		var cellText = document.createTextNode(a[i]);
-		cell.appendChild(cellText);
-		headerRow.appendChild(cell);
-	}
+function makeMenu() {  // Makes the menu based on items in the bar
+    const newMenu = []
+    for(item in cocktailObjectList) {
+        let have = true;
+        for(ingredient in cocktailObjectList[item].ingredients) {
+            // Checks if the ingredient has a * indicating optional
+            if (/[*]+/.test(cocktailObjectList[item].ingredients[ingredient])) {
+                continue;
+            // Checks if the ingredient is in the bar
+            } else if (myBar.ingredients.includes(cocktailObjectList[item].ingredients[ingredient])){
+                continue;
+            // Checks that the ingredient is not a blank string
+            } else if (/\S/.test(cocktailObjectList[item].ingredients[ingredient])){
+                have = false;
+            }
+        }
 
-	tableBody.appendChild(headerRow)
+        if (have) {
+            newMenu.push(cocktailObjectList[item]);
+        }
+    }
 
-	for (item in myMenu) {
-		var nameText = document.createTextNode(myMenu[item].name);
-		var proText = document.createTextNode(myMenu[item].matchPro);
-		var conText = document.createTextNode(myMenu[item].matchCon);
-
-		var b = [nameText, proText, conText]
-
-		var row = document.createElement('tr');
-		for (var j in b) {
-			var cell = document.createElement('td');
-			cell.appendChild(b[j]);
-			row.appendChild(cell);
-		}
-
-		tableBody.appendChild(row);
-
-	tableSpot.appendChild(tableBody);
-	menuSpot.appendChild(tableSpot);
-	}
+    return newMenu;
 }
+
+
+function makeMatchSpot() {
+    tasteSpot.setAttribute('style', 'height:0px');
+    matchSpot.setAttribute('style', 'min-height:300px');
+    let buttonDiv = document.createElement('div');
+    buttonDiv.setAttribute('class', 'centerButton');
+    let matchButton = makeButton('See your matches!', function (event) {
+        clear(matchSpot),
+        makeTopMatches(), 
+        event.stopPropagation();
+    });
+    buttonDiv.appendChild(matchButton)
+    matchSpot.appendChild(buttonDiv);
+}
+
+
+function makeTopMatches() {
+    let topMenu = []
+    console.log('1' + Math.max(...myMatchPercents));
+    for (item in myMenu) {
+        if (myMenu[item].matchPro === Math.max(...myMatchPercents)) {
+            topMenu.push(myMenu[item]);
+        }
+    }
+
+    while (topMenu.length < 3) {
+        let maximum = Math.max(...myMatchPercents);
+        console.log(maximum);
+        let maxIndex = myMatchPercents.indexOf(maximum);
+        myMatchPercents.splice(maxIndex, 1);
+        for (item in myMenu) {
+            if (myMenu[item].matchPro === Math.max(...myMatchPercents)) {
+                topMenu.push(myMenu[item])
+            }
+        }
+    }
+
+    printTopMatches(topMenu);
+
+}
+
+function printTopMatches(menu) {
+    let tableSpot = document.createElement('table');
+    let tableBody = document.createElement('tbody');
+    let headerRow = document.createElement('tr');
+    let a = ['Cocktail', 'Your Match Percentage']
+    for (let i in a) {
+        let cell = document.createElement('th');
+        let cellText = document.createTextNode(a[i]);
+        cell.appendChild(cellText);
+        headerRow.appendChild(cell);
+    }
+
+    tableBody.appendChild(headerRow);
+
+    for (item in menu) {
+        let nameText = document.createTextNode(menu[item].name);
+        let proText = document.createTextNode(menu[item].matchPro);
+
+        let b = [nameText, proText];
+
+        let row = document.createElement('tr');
+        for (let j in b) {
+            let cell = document.createElement('td');
+            cell.appendChild(b[j]);
+            row.appendChild(cell);
+        }
+
+        tableBody.appendChild(row);
+
+    tableSpot.appendChild(tableBody);
+    matchSpot.appendChild(tableSpot);
+    }
+
+}
+
+
+function printMatches(myMenu) {
+    let tableSpot = document.createElement('table');
+    let tableBody = document.createElement('tbody');
+    let headerRow = document.createElement('tr');
+    let a = ['Cocktail', 'Love', 'Hate']
+    for (let i in a) {
+        let cell = document.createElement('th');
+        let cellText = document.createTextNode(a[i]);
+        cell.appendChild(cellText);
+        headerRow.appendChild(cell);
+    }
+
+    tableBody.appendChild(headerRow);
+
+    for (item in myMenu) {
+        let nameText = document.createTextNode(myMenu[item].name);
+        let proText = document.createTextNode(myMenu[item].matchPro);
+        let conText = document.createTextNode(myMenu[item].matchCon);
+
+        let b = [nameText, proText, conText];
+
+        let row = document.createElement('tr');
+        for (let j in b) {
+            let cell = document.createElement('td');
+            cell.appendChild(b[j]);
+            row.appendChild(cell);
+        }
+
+        tableBody.appendChild(row);
+
+    tableSpot.appendChild(tableBody);
+    matchSpot.appendChild(tableSpot);
+    }
+    /*
+    // FROM ATTEMPT TO REORDER TABLE BY PERCENTAGE 
+    // DECIDED TO GO WITH ONLY DISPLAYING TOP RESPONSES
+    let newButton = document.createElement('input');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('value', 'Reorder');
+    newButton.addEventListener('click', function(event) {
+        reorderCol(1),
+        event.stopPropagation();
+    });
+
+    matchSpot.appendChild(newButton);
+    */
+}
+
+/* 
+// FROM ATTEMPT TO REORDER TABLE BY PERCENTAGE
+function reorderCol(colNum) {
+    let table = document.getElementsByTagName('tbody')[0];
+    let incorrect = table.getElementsByTagName('tr').length - 1;
+    console.log(incorrect);
+    let shouldSwitch = false;
+    let i = 1;
+
+    while (i < incorrect) {
+        const rows = table.getElementsByTagName('tr');
+        let x = rows[i].getElementsByTagName('td')[1].innerHTML;
+        let y = rows[i + 1].getElementsByTagName('td')[1].innerHTML;
+        let x_name = rows[i].getElementsByTagName('td')[0].innerHTML;
+        let y_name = rows[i + 1].getElementsByTagName('td')[0].innerHTML;
+        console.log(x_name, y_name, x < y);
+        //console.log(rows[i].getElementsByTagName('td')[1].innerHTML)
+        if (x < y) {
+            shouldSwitch = true;
+        } else {
+            i++;
+        }
+        //else if (rows[i][colNum] === rows[i + 1][colNum] && rows[i][0] > rows[i + 1][0]) {
+        //    shouldSwitch = true;
+        //}
+
+        if (shouldSwitch) {
+            console.log('switching' + x_name + y_name)
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            shouldSwitch = false;
+            i = 1;
+        }
+    }
+}
+*/
+
 
 // MAIN ------------------------------------------
 // Makes all the cocktails
-for (var i = 0; i < listLength; i++) {
-	var cocktail = new Cocktail(allCocktails[i][0], allCocktails[i][1], allCocktails[i][2]);
-	cocktailObjectList.push(cocktail);
+for (let i = 0; i < listLength; i++) {
+    let cocktail = new Cocktail(allCocktails[i][0], allCocktails[i][1], allCocktails[i][2]);
+    cocktailObjectList.push(cocktail);
 }
 
-//var barSpot = document.getElementById('barBoxes');
-for (item in barList) {
-	var newCheckItem = document.createElement('INPUT');
-	newCheckItem.setAttribute('type', 'checkbox');
-	newCheckItem.setAttribute('id', barList[item]);
-	newCheckItem.setAttribute('name', 'bar');
-	newCheckItem.setAttribute('value', barList[item]);
-	var newLabel = document.createElement('label');
-	newLabel.setAttribute('for', barList[item]);
-	barCheckBoxSpot.appendChild(newCheckItem);
-	newLabel.appendChild(document.createTextNode(barList[item]));
-	barCheckBoxSpot.appendChild(newLabel);
-}
-
+barInput();
 
 
 
