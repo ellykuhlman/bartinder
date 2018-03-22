@@ -5,11 +5,11 @@ import tkinter.messagebox
 import tkinter.simpledialog
 from difflib import SequenceMatcher
 from tkinter import * 
-from tkinter_test import Checklist, SwipeScreen
+from tkinter_helpers import Checklist, SwipeScreen
 
 window = Tk()
 window.minsize(width=750, height=500)
-middle = Frame(height=475, width=300)
+middle = Frame(height=500, width=300)
 
 window.update()
 
@@ -165,8 +165,8 @@ def tally_tastes(dictionary, pro, con):
 	title.place(relx=.5, rely=.1, anchor='n')
 	for key in dictionary:
 		swipe = SwipeScreen(window, middle, key)
+
 		if swipe.make_swipe():
-		#if input('{} '.format(key)) == 'y':
 			use_dict = pro
 		else:
 			use_dict = con
@@ -176,7 +176,6 @@ def tally_tastes(dictionary, pro, con):
 				use_dict[item.lower()] = 1
 			else:
 				use_dict[item.lower()] += 1
-
 	title.destroy()
 
 	return pro, con
