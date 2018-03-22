@@ -127,7 +127,7 @@ body input[type=button]:focus {
   border-width: 1px;
   margin-left: auto;
   margin-right: auto;
-  font-weight: 100
+  /*font-weight: 100*/
 }
 
 .bottom {
@@ -150,4 +150,16 @@ tr {
 
 tr:nth-child(even) {
   background-color: #dbdddd;
+}
+
+tr:hover, tr:nth-child(even):hover {
+  background-color: #ceede8;
+}
+
+#matches h3 {
+  margin-left: 50px;
+}
+
+ul, li {
+  margin-left: 50px;
 }
