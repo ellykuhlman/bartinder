@@ -28,6 +28,17 @@ const topMenu = []
 var myBar;
 var myMenu;
 
+const similarTerms = {
+    'gin': ['gin'],
+    'orange liqueur': ['Cointreau', 'orange liqueur'],
+    'rum': ['rum'],
+    'whiskey': ['bourbon', 'rye', 'whiskey'],
+    'tequila': ['tequila'],
+    'brandy': ['cognac', 'brandy']
+};
+
+const similarTermsList = []
+
 // GLOBAL DOM CONSTANTS -----------------------
 const barSpot = document.getElementById('barForm');
 const barCheckBoxSpot = document.getElementById('barBoxes');
@@ -141,6 +152,22 @@ function checkAllBar() {
 
 function makeBar() {
     const checkedItems = isChecked(barList);
+    // idea: do this here 
+
+
+    for (key in similarTerms) {
+        if (checkedItems.includes(key)) {
+            console.log(key);
+            for (i in similarTerms[key]) {
+                console.log(similarTerms[key][i])
+                checkedItems.push(similarTerms[key][i]);
+                similarTermsList.push(similarTerms[key][i]);
+            }
+            //console.log(checkedItems);
+            //console.log(similarTermsList);
+        }
+    }
+
     myBar = new Bar('myBar', checkedItems);
     clear(barSpot);
     return myBar;
@@ -281,34 +308,57 @@ function cocktailMatches(likes, dislikes) {
     }   
 }
 
+function checkLists(a, b) {
+    let sort_a = a.concat().sort(),
+        sort_b = b.concat().sort(),
+        i = 0
+        j = 0
+
+    console.log(sort_a, sort_b)
+    while (i < a.length && j < b.length) {
+        if (sort_a[i] === sort_b[j]) {
+            return true;
+            break;
+        } else if (sort_a[i] < sort_b[j] && i < a.length -1 ) {
+            i++;
+        } else if (sort_a[i] > sort_b[j] && j < b.length -1 ) {
+            j++;
+        } else {
+            return false;
+            break;
+        }
+    }
+
+    return false;
+
+}
 
 function makeMenu() {  // Makes the menu based on items in the bar
     
     // HOW TO GO THE OTHER WAY WITH THESE TERMS?!
-    let similarTerms = {
-        'gin': ['gin'],
-        'orange liqueur': ['Cointreau', 'orange liqueur'],
-        'rum': ['rum'],
-        'whiskey': ['bourbon', 'rye', 'whiskey'],
-        'tequila': ['tequila'],
-        'brandy': ['cognac', 'brandy']
-    }
+
 
     const newMenu = []
     for(item in cocktailObjectList) {
         let have = true;
         for(ingredient in cocktailObjectList[item].ingredients) {
             // Checks if the ingredient has a * indicating optional
+            let ingredientWords = cocktailObjectList[item].ingredients[ingredient].split(' ');
             if (/[*]+/.test(cocktailObjectList[item].ingredients[ingredient])) {
-                continue;
+                have=true;
             // Checks if the ingredient is in the bar
             } else if (myBar.ingredients.includes(cocktailObjectList[item].ingredients[ingredient])){
-                continue;
-            } else if () {
+                have=true;
+            // Checks if the ingredient is in the bar under another name
+            } else if (checkLists(ingredientWords, similarTermsList)) {
+                have=true;
             // Checks that the ingredient is not a blank string
             } else if (/\S/.test(cocktailObjectList[item].ingredients[ingredient])){
                 have = false;
+            } else {
+                have = false;
             }
+            console.log(cocktailObjectList[item].ingredients[ingredient], have);
         }
 
         if (have) {
