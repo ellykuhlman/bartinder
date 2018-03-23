@@ -334,9 +334,6 @@ function checkLists(a, b) {
 }
 
 function makeMenu() {  // Makes the menu based on items in the bar
-    
-    // HOW TO GO THE OTHER WAY WITH THESE TERMS?!
-
 
     const newMenu = []
     for(item in cocktailObjectList) {
@@ -456,37 +453,28 @@ function printTopMatches(menu) {
 }
 
 function printRecipe(cocktail) {
-    //let matches = document.querySelectorAll('#matches *');
-    //console.log(matches);
     clear(matchSpot);
 
     let cocktailName = document.createElement('h3');
     cocktailName.appendChild(document.createTextNode(cocktail.name));
 
-    console.log(cocktail.recipe);
-
     recipeText = cocktail.recipe.replace(/[\[\]\'\"]/g, '');
     recipeText = recipeText.split(', ');
     for (let i = 0; i < recipeText.length; i++) {
         firstChar = recipeText[i].charCodeAt(0);
-        console.log(recipeText[i][0], firstChar);
         if (firstChar >= 65 && firstChar <= 90) {
-            console.log(recipeText[i]);
             let j = (i + 1);
-            console.log(i, j);
-            console.log(recipeText.length);
             while (j < recipeText.length) {
                 recipeText[i] = recipeText[i] + ', ' + recipeText[j];
                 recipeText.splice(j, 1);
             }
         }
     }
-    console.log(recipeText);
+
 
     let cocktailRecipe = document.createElement('ul');
     for (item in recipeText) {
         let newBullet = document.createElement('li');
-        console.log(recipeText[item])
         newBullet.appendChild(document.createTextNode(recipeText[item]));
         cocktailRecipe.appendChild(newBullet);
     }
@@ -500,6 +488,12 @@ function printRecipe(cocktail) {
         event.stopPropagation();});
 
     matchSpot.appendChild(backButton);
+
+    let creditText = document.createElement('p');
+    creditText.setAttribute('class', 'credit');
+    creditText.appendChild(document.createTextNode('recipe from socialhourcocktails.com'));
+
+    matchSpot.appendChild(creditText);
 }
 
 

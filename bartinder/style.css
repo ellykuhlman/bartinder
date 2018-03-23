@@ -139,6 +139,13 @@ body input[type=button]:focus {
 
 }
 
+.credit {
+  font-size: 70%;
+  font-style: italic;
+  margin-top: 20px;
+  border-top: solid 2px #e0e0e0;
+}
+
 table, th, td {
   width: 60%;
   margin: auto;
