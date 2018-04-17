@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset='utf-8'>
-    <title>bartinder test</title>
+    <title>bartinder</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet">
     <link rel='stylesheet' type='text/css' href='style.css'>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> /-->
@@ -12,13 +12,21 @@
     <div class='header'>
       <h2>Bartinder</h2>
     </div>
-    <div id='barForm' class='barSpotDiv'>
-      <h3>Step 1: Assemble your bar</h3>
+    <div id='welcome'>
+      <h3>Welcome to Bartinder</h3>
+      <p>Bartinder is an app designed to match you to your perfect cocktail in three easy steps:</p>
+      <ol>
+        <li>tell me what you're working with</li>
+        <li>tell me what you like</li>
+        <li>meet your matches</li>
+      </ol>
+      <p>Ready to get started?</p>
+      <input type='button' value='Yes!' onclick='makeBarSpot()'>
+    </div>
+    <div id=barSpot class='barSpotDiv'>
+      <div id=barHeader></div>
       <div id=barBoxes></div>
-      <div id=buttonSpot>
-      <input type='button' value='Check All' onclick='checkAllBar()'>
-      <input type='button' class='nextButton' value='Next' onclick='this.disabled=true; makeBar(), makeTasteSpot()'>
-      </div>
+      <div id=barFooter></div>
     </div>
     <div id='tastes'>
       <!-- <input type='button' value='Input Tastes' onclick='inputTastes()'> /-->

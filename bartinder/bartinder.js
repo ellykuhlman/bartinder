@@ -40,7 +40,7 @@ const similarTerms = {
 const similarTermsList = []
 
 // GLOBAL DOM CONSTANTS -----------------------
-const barSpot = document.getElementById('barForm');
+const barSpot = document.getElementById('barSpot');
 const barCheckBoxSpot = document.getElementById('barBoxes');
 const tasteSpot = document.getElementById('tastes');
 const matchSpot = document.getElementById('matches');
@@ -118,7 +118,37 @@ function isChecked(list) { // Checks if an item is checked off, then adds to the
 
 // BAR FUNCITONS ---------------------------------------------
 
+function makeBarSpot() {
+
+    clear(document.getElementById('welcome'));
+
+    let barHeaderSpot = document.getElementById('barHeader');
+
+    let barHeader = document.createElement('h3');
+    barHeader.appendChild(document.createTextNode('What\'s in your bar?'));
+
+    barHeaderSpot.appendChild(barHeader);
+
+    barInput()
+
+    let barFooterSpot = document.getElementById('barFooter');
+
+    let checkAllButton = makeButton('Check All', function(event) {
+        checkAllBar(),
+        event.stopPropagation();})
+
+    let barNextButton = makeButton('Next', function(event) {
+
+        makeBar(),
+        makeTasteSpot(),
+        event.stopPropagation();})
+
+    barFooterSpot.appendChild(checkAllButton);
+    barFooterSpot.appendChild(barNextButton);
+}
+
 function barInput() {
+
     for (item in barList) {
         let newDiv = document.createElement('div');
         newDiv.setAttribute('class', 'bar-checkbox-div');
@@ -504,7 +534,7 @@ for (let i = 0; i < listLength; i++) {
     cocktailObjectList.push(cocktail);
 }
 
-barInput();
+// barInput();
 
 
 
